@@ -58,7 +58,7 @@ export default function LoginPage() {
       if (response.user?.role === "admin" || response.user?.role === "lecturer") {
         router.push("/admin/dashboard")
       } else {
-        router.push("/students/dashboard")
+        router.push("/students/dashboard") 
       }
     } catch (error: any) {
       console.error("Login error:", error)
