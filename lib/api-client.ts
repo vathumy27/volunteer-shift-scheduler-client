@@ -1,22 +1,17 @@
-export function downloadBlob(blob: Blob, filename: string) {
-  const url = window.URL.createObjectURL(blob)
-  const link = document.createElement("a")
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  window.URL.revokeObjectURL(url)
-}
+import axios from 'axios';
 
-export function getFilenameFromDisposition(
-  disposition: string | undefined,
-  fallback: string
-) {
-  if (!disposition) return fallback
-  const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
-  if (match?.[1]) {
-    return match[1].replace(/['"]/g, "")
+const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000',
+});
+
+apiClient.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
-  return fallback
-}
+  return config;
+});
+
+export default apiClient;
