@@ -134,7 +134,7 @@ export default function RegisterPage() {
                   )}
                 />
 
-                {/* Role selection field - limited to student/lecturer */}
+                {/* Role selection field - limited to volunteer/coordinator */}
                 <Controller
                   name="role"
                   control={form.control}
@@ -148,8 +148,8 @@ export default function RegisterPage() {
                         aria-invalid={fieldState.invalid}
                         className="h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 py-1.5 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-zinc-900 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
                       >
-                        <option value="volunteer">volunteer</option>
-                        <option value="organizer">organizer</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="coordinator">Coordinator</option>
                       </select>
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />

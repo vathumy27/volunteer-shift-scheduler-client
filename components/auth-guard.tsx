@@ -62,10 +62,10 @@ export function GuestRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!loading && user) {
-      if (user.role === "admin" || user.role === "lecturer") {
+      if (user.role === "admin" || user.role === "coordinator") {
         router.push("/admin/dashboard")
       } else {
-        router.push("/students/dashboard")
+        router.push("/volunteers/dashboard")
       }
     }
   }, [user, loading, router])
