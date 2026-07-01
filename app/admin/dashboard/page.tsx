@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { CalendarDays, Clock, UserPlus, Users, ArrowRight, CheckCircle2 } from "lucide-react"
+import {
+  CalendarDays,
+  Clock,
+  UserPlus,
+  Users,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -13,12 +20,14 @@ import { getEvents } from "@/services/event"
 import { getVolunteers } from "@/services/volunteer"
 import { Event } from "@/types/event"
 import { Volunteer } from "@/types/volunteer"
+import { LogOut } from "lucide-react"
 
 export default function AdminDashboard() {
   const { user } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { logout } = useAuth()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,11 +49,7 @@ export default function AdminDashboard() {
     fetchData()
   }, [])
 
-  const openEvents = useMemo(() => events.filter((e) => e.is_available), [events])
-  const spotsOpen = useMemo(
-    () => openEvents.reduce((sum, e) => sum + (e.volunteers_needed || 0), 0),
-    [openEvents]
-  )
+  
 
   const stats = [
     {
@@ -55,13 +60,11 @@ export default function AdminDashboard() {
     },
     {
       label: "Open Events",
-      value: openEvents.length,
       icon: CalendarDays,
       accent: "from-emerald-500 to-teal-500",
     },
     {
       label: "Spots Needed",
-      value: spotsOpen,
       icon: UserPlus,
       accent: "from-amber-500 to-orange-500",
     },
@@ -80,13 +83,21 @@ export default function AdminDashboard() {
           Dashboard
         </h1>
         <p className="text-sm text-muted-foreground">
-          Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}. Here&apos;s
-          an overview of your volunteer program.
+          Here&apos;s an overview of your volunteer program.
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Button
+        variant="ghost"
+        size="icon"
+        onClick={logout}
+        className="h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+        aria-label="Logout"
+      >
+        <LogOut className="h-4 w-4" />
+      </Button>
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
@@ -115,7 +126,9 @@ export default function AdminDashboard() {
         {/* Recent volunteers */}
         <Card className="shadow-xs">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-lg font-bold">Recent Volunteers</CardTitle>
+            <CardTitle className="text-lg font-bold">
+              Recent Volunteers
+            </CardTitle>
             <Button asChild variant="ghost" size="sm" className="text-primary">
               <Link href="/admin/volunteers">
                 View all
@@ -128,7 +141,10 @@ export default function AdminDashboard() {
             {isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 animate-pulse rounded-lg bg-muted" />
+                  <div
+                    key={i}
+                    className="h-12 animate-pulse rounded-lg bg-muted"
+                  />
                 ))}
               </div>
             ) : volunteers.length === 0 ? (
@@ -138,15 +154,20 @@ export default function AdminDashboard() {
             ) : (
               <ul className="divide-y divide-border">
                 {volunteers.slice(0, 5).map((v) => (
-                  <li key={v.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20 text-xs font-bold uppercase">
+                  <li
+                    key={v.id}
+                    className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-xs font-bold text-primary uppercase">
                       {v.full_name?.charAt(0) || "?"}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-foreground">
                         {v.full_name}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">{v.email}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {v.email}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -167,35 +188,6 @@ export default function AdminDashboard() {
             </Button>
           </CardHeader>
           <Separator />
-          <CardContent className="pt-4">
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 animate-pulse rounded-lg bg-muted" />
-                ))}
-              </div>
-            ) : openEvents.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                No events currently open.
-              </p>
-            ) : (
-              <ul className="divide-y divide-border">
-                {openEvents.slice(0, 5).map((e) => (
-                  <li key={e.id} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-foreground">
-                        {e.event_name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {e.volunteers_needed} needed · {e.duration_hours}h
-                      </p>
-                    </div>
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
         </Card>
       </div>
     </div>
