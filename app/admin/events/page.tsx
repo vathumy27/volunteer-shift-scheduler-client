@@ -1,10 +1,10 @@
 
-// // import { AuthenticatedRoute } from "@/components/auth-guard"
+// import { AuthenticatedRoute } from "@/components/auth-guard"
 
-// export default function AdminEventsPage() {
-//   return (
-//     <div>
-//           <EventListView />
-//     </div>
-//   )
-// }
+export default function AdminEventsPage() {
+  return (
+    <div>
+          {/* <EventListView /> */}
+    </div>
+  )
+}
