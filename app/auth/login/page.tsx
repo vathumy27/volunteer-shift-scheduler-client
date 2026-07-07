@@ -55,7 +55,7 @@ export default function LoginPage() {
       toast.success("Logged in successfully!")
       
       // Redirect based on role
-      if (response.user?.role === "admin" || response.user?.role === "coordinator") {
+      if (response.user?.role === "admin" || response.user?.role === "organizer") {
         router.push("/admin/dashboard")
       } else {
         router.push("/volunteers/dashboard")

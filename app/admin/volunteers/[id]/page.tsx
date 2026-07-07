@@ -1,11 +1,12 @@
-import VolunteerProfileView from "@/sections/volunteer/view/volunteer-profile-view"
-import React from "react"
-import { AuthenticatedRoute } from "@/components/auth-guard"
+"use client"
 
-export default function AdminVolunteerProfilePage() {
-  return (
-    <AuthenticatedRoute allowedRoles={["admin", "coordinator"]}>
-      <VolunteerProfileView />
-    </AuthenticatedRoute>
-  )
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+
+export default function VolunteerDetailRedirect() {
+  const router = useRouter()
+  useEffect(() => {
+    router.replace("/admin/events")
+  }, [router])
+  return null
 }

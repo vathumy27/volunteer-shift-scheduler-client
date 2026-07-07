@@ -28,6 +28,7 @@ import { useAuth } from "@/providers/auth-provider"
 import { GuestRoute } from "@/components/auth-guard"
 
 const formSchema = z.object({
+  name: z.string().min(1, "Name is required."),
   email: z
     .string()
     .min(1, "Email is required.")
@@ -47,6 +48,7 @@ export default function RegisterPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
       role: "volunteer",
@@ -55,7 +57,7 @@ export default function RegisterPage() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      await register(data.email, data.password, data.role)
+      await register(data.name, data.email, data.password, data.role)
       toast.success("Account registered successfully! Please sign in.")
       router.push("/auth/login")
     } catch (error: any) {
@@ -88,6 +90,27 @@ export default function RegisterPage() {
           <CardContent>
             <form id="register-form" onSubmit={form.handleSubmit(onSubmit)}>
               <FieldGroup className="">
+                <Controller
+                  name="name"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder="Jane Doe"
+                        autoComplete="name"
+                        className="w-full"
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+
                 {/* Email field */}
                 <Controller
                   name="email"
@@ -134,7 +157,11 @@ export default function RegisterPage() {
                   )}
                 />
 
-                {/* Role selection field - limited to volunteer/coordinator */}
+                {/* Role selection.
+                    Note: "Admin" is NOT an option here on purpose.
+                    Only 1-2 admin accounts should exist, and they are
+                    created separately by the project owner (see
+                    api/seed_admin.py), not through public sign-up. */}
                 <Controller
                   name="role"
                   control={form.control}
@@ -149,7 +176,7 @@ export default function RegisterPage() {
                         className="h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 py-1.5 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-zinc-900 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
                       >
                         <option value="volunteer">Volunteer</option>
-                        <option value="coordinator">Coordinator</option>
+                        <option value="organizer">Organizer</option>
                       </select>
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
