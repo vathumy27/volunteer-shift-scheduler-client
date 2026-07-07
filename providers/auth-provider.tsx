@@ -6,6 +6,7 @@ import apiClient from "@/lib/api-client"
 
 export interface AuthUser {
   id: number
+  name: string
   email: string
   role: string
   created_at?: string
@@ -16,7 +17,7 @@ interface AuthContextType {
   token: string | null
   loading: boolean
   login: (email: string, password: string) => Promise<any>
-  register: (email: string, password: string, role: string) => Promise<any>
+  register: (name: string, email: string, password: string, role: string) => Promise<any>
   logout: () => void
 }
 
@@ -59,8 +60,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return response.data
   }
 
-  const register = async (email: string, password: string, role: string) => {
+  const register = async (name: string, email: string, password: string, role: string) => {
     const response = await apiClient.post("/api/auth/register", {
+      name,
       email,
       password,
       role,
